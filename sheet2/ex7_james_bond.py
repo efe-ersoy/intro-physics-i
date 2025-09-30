@@ -19,7 +19,7 @@ boat_x0 = 10.0  # m from stage
 boat_speed = 30 / 3.6  # km/h -> m/s
 
 # Simulation setup
-dt = 0.02  # time step
+dt = 0.01  # time step
 T_max = 2.0  # simulation max time (s)
 
 
@@ -43,6 +43,19 @@ def boat_position(t):
     x_left = boat_x0 + boat_speed * t
     x_right = x_left + boat_length
     return x_left, x_right, 0, boat_height
+
+
+def calculate_velocity_range():
+    """Calculate the min and max velocities for Bond to successfully land on the boat."""
+    # Time to fall from stage height
+    t_fall = np.sqrt(2 * (stage_height - boat_height) / g)
+
+    xmin, xmax, _, _ = boat_position(t_fall)
+
+    vmin = (xmin - x0_bond) / t_fall * 3.6  # convert to km/h
+    vmax = (xmax - x0_bond) / t_fall * 3.6  # convert to km/h
+
+    return vmin, vmax
 
 
 # -----------------------------
@@ -122,5 +135,16 @@ def animate_jump(v0_kmh):
 # Example Run
 # -----------------------------
 if __name__ == "__main__":
-    # Try different velocities to test
-    animate_jump(v0_kmh=80)
+    vmin, vmax = calculate_velocity_range()
+    print(
+        f"To successfully land on the boat, Bond's initial velocity must be between {vmin:.2f} km/h and {vmax:.2f} km/h."
+    )
+
+    v0_test = 93  # Enter a test velocity in km/h
+    if vmin <= v0_test <= vmax:
+        print(f"{v0_test} km/h should succeed.")
+    else:
+        print(f"{v0_test} km/h should fail.")
+
+    # Run animation with test velocity
+    animate_jump(v0_kmh=v0_test)
