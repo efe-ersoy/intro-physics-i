@@ -1,0 +1,1 @@
+This repo contains python scripts for the Introduction to Physics I (Einführung in Physik I) course for Biology, Pharmaceutical Sciences, and Geosciences.
