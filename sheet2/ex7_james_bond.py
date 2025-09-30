@@ -55,6 +55,9 @@ def calculate_velocity_range():
     vmin = (xmin - x0_bond) / t_fall * 3.6  # convert to km/h
     vmax = (xmax - x0_bond) / t_fall * 3.6  # convert to km/h
 
+    print(
+        f"To successfully land on the boat, Bond's initial velocity must be between {vmin:.2f} km/h and {vmax:.2f} km/h."
+    )
     return vmin, vmax
 
 
@@ -86,6 +89,7 @@ def animate_jump(v0_kmh):
 
     # State variables
     stopped = {"done": False}
+    success = {"success": False}
 
     def init():
         bond_dot.set_data([], [])
@@ -110,9 +114,11 @@ def animate_jump(v0_kmh):
         boat_patch.set_xy((x_left, 0))
 
         # --- Stop conditions ---
-        if (x_left <= x <= x_right) and (0 <= y <= top):
+        eps = 0.05  # tolerance for landing
+        if (x_left <= x <= x_right) and (top - eps <= y <= top):
             status_text.set_text("Success! 007 landed on the boat.")
             stopped["done"] = True
+            success["success"] = True
         elif y <= 0:
             status_text.set_text("Missed! 007 fell into the water.")
             stopped["done"] = True
@@ -129,6 +135,7 @@ def animate_jump(v0_kmh):
         repeat=False,
     )
     plt.show()
+    return success["success"]
 
 
 # -----------------------------
@@ -136,11 +143,8 @@ def animate_jump(v0_kmh):
 # -----------------------------
 if __name__ == "__main__":
     vmin, vmax = calculate_velocity_range()
-    print(
-        f"To successfully land on the boat, Bond's initial velocity must be between {vmin:.2f} km/h and {vmax:.2f} km/h."
-    )
 
-    v0_test = 93  # Enter a test velocity in km/h
+    v0_test = 93.9  # Enter a test velocity in km/h
     if vmin <= v0_test <= vmax:
         print(f"{v0_test} km/h should succeed.")
     else:
@@ -148,3 +152,6 @@ if __name__ == "__main__":
 
     # Run animation with test velocity
     animate_jump(v0_kmh=v0_test)
+
+    # Note that, for values close to vmin or vmax, the simulation result might not match the expectation.
+    # This is due to the discrete time steps and can be improved by reducing dt.
