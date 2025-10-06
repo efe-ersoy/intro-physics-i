@@ -144,7 +144,7 @@ def animate_jump(v0_kmh):
 if __name__ == "__main__":
     vmin, vmax = calculate_velocity_range()
 
-    v0_test = 93.9  # Enter a test velocity in km/h
+    v0_test = 60  # Enter a test velocity in km/h
     if vmin <= v0_test <= vmax:
         print(f"{v0_test} km/h should succeed.")
     else:
